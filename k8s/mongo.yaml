@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listing-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listing-mongo
+  template:
+    metadata:
+      labels:
+        app: listing-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+      volumes:
+        - name: data
+          emptyDir: {}   # demo only: data is lost if the pod restarts
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: listing-mongo
+spec:
+  selector:
+    app: listing-mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
